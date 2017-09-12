@@ -68,6 +68,21 @@ angular.module('dashboard.directives.ModelFieldReference', [
         if (!scope.data) scope.selected = {};
       });
 
+      scope.$watch('selected.items', function() { // watch selected.items to ensure previously selected items are accounted for.
+        if (scope.selected) {
+          scope.refreshChoices();
+        }
+      });
+
+      function removeSelectedFromList(selected, list, id) {
+        var filteredList = _.reject(list, function(o) {
+          return _.find(selected, function(s) {
+            return o[id] === s[id];
+          })
+        });
+        return filteredList;
+      }
+      
       function replaceSessionVariables(string) {
         if (typeof string !== 'string') return string;
         try {
