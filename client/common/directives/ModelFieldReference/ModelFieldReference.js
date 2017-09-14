@@ -61,6 +61,13 @@ angular.module('dashboard.directives.ModelFieldReference', [
       scope.selected.item = null; //for single select; initialize to null so placeholder is displayed
       scope.list = [];
 
+      /**
+       * Watch for scope.data. If it has no data, it will clear the selected item/s. 
+       */
+      scope.$watch('data', function() {
+        if (!scope.data) scope.selected = {};
+      });
+
       function replaceSessionVariables(string) {
         if (typeof string !== 'string') return string;
         try {
@@ -235,6 +242,10 @@ angular.module('dashboard.directives.ModelFieldReference', [
 
      scope.onSelect = function(item, model) {
        if (scope.options.multiple) {
+         if (item && item[scope.options.searchField] == "[Add New Item]") {
+           var value = element.find("input.ui-select-search").val();
+           item[scope.key] = value;
+         }
          //For multi-select add as relationship array objects to modelData (when saving, the CMS relational-upsert.js will handle it)
          scope.selected.items.push(item);
          //Make sure to loop through all items for junctionMeta (previously loaded items will not have junctionMeta populated)
